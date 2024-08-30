@@ -1,65 +1,29 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB from "../config/dbConfig.js";
-import Product from "./productModel.js";
-import amqp from "amqplib";
-import isAuthenticated from "../../../authentication.js";
+import connectDB from "./config/dbConfig.js";
+import productRouter from "./routes/productRoutes.js";
+import { connectRabbitMQ, closeConnection } from "./rabbitmq/rabbitmq.js";
 
 dotenv.config({ path: "../" });
 const PORT = process.env.PORT || 4040;
 
 const app = express();
+
 connectDB();
 
 app.use(express.json());
 
-let connection;
-let channel;
+app.use("/product", productRouter);
 
-const connect = async () => {
-    const amqpServer = "amqp://localhost:5672";
-    connection = await amqp.connect(amqpServer);
-    channel = await connection.createChannel();
-    await channel.assertQueue("PRODUCT");
+const startServer = async () => {
+    try {
+        await connectRabbitMQ();
+        app.listen(PORT, () => console.log(`product service is running on ${PORT}`));
+        process.on("exit", closeConnection);
+    } catch (error) {
+        console.error("Failed to start the server ", error);
+        process.exit(1);
+    }
 };
-connect();
 
-//create a product
-app.post("/product/create", async (req, res) => {
-    const { name, description, price } = req.body;
-    const product = new Product({
-        name,
-        description,
-        price,
-    });
-    product.save();
-    return res.json(product);
-});
-
-let order;
-
-
-//buy a product
-app.post("/product/buy", async (req, res) => {
-    const { ids } = req.body;
-    const products = await Product.find({ _id: { $in: ids } });
-    console.log("products for Orders:", products);
-
-    channel.sendToQueue(
-        "ORDERS",
-        Buffer.from(
-            JSON.stringify({
-                products,
-                userEmail: "hello@123gmail.com",
-            })
-        )
-    );
-
-    channel.consume("PRODUCT",(data)=>{
-        console.log('Consuming the Ordered Products');
-        order=JSON.parse(data.content);
-    })
-    return res.json(order)
-});
-
-app.listen(PORT, () => console.log(`user-auth service is running on ${PORT}`));
+startServer();
