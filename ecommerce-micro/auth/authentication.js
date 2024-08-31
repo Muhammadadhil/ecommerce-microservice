@@ -1,11 +1,13 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "./.env" });
+dotenv.config({ path: "../../.env" });
 
 const isAuthenticated = (req, res, next) => {
+    console.log("Authenticating the User !!");
     const authHeader = req.headers["authorization"];
-
+    console.log('authHeader:',authHeader);
+    
     if (!authHeader) {
         return res.status(401).json({ message: "Authorization header missing" });
     }
@@ -20,9 +22,13 @@ const isAuthenticated = (req, res, next) => {
         if (err) {
             return res.status(403).json({ message: "Invalid or expired token" });
         }
+        console.log("user:", user);
         req.user = user;
         next();
     });
 };
 
 export default isAuthenticated;
+
+
+

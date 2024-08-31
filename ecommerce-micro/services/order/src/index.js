@@ -38,7 +38,7 @@ const connectToRabbitMQ = async () => {
     await channel.assertQueue("ORDERS");
 };
 
-const getOrder = async() => {
+const getOrder = async () => {
     channel.consume("ORDERS", (data) => {
         console.log("Consuming Order Service!!");
 
@@ -47,15 +47,13 @@ const getOrder = async() => {
 
         channel.ack(data);
         channel.sendToQueue("PRODUCT", Buffer.from(JSON.stringify({ newOrder })));
+        channel.sendToQueue("NOTIFICATION", Buffer.from(JSON.stringify({ type: "ORDER_SUCCES", payload: { userEmail, orderId: newOrder._id } })));
     });
 };
 
-
-const startServer=async ()=>{
+const startServer = async () => {
     app.listen(PORT, () => console.log(`user-auth service is running on ${PORT}`));
     await connectToRabbitMQ();
     await getOrder();
-
-}
+};
 startServer();
-

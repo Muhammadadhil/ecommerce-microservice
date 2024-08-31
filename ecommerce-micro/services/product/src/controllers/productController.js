@@ -9,13 +9,14 @@ export const buyProduct= async (req, res) => {
     const products = await Product.find({ _id: { $in: ids } });
 
     const channel=getChannel();
-    channel.sendToQueue("ORDERS", Buffer.from(JSON.stringify({ products, userEmail: "hello@123gmail.com" })));
+    
+    channel.sendToQueue("ORDERS", Buffer.from(JSON.stringify({ products, userEmail: req.user.email })));
     console.log(`Publishing Message to ORDERS queue with ${products}`);
 
     channel.consume("PRODUCT", (data) => {
         console.log("Consuming the Ordered Products");
         order = JSON.parse(data.content);
-    });
+    },{noAck:true})
     return res.json(order);
 };
 
