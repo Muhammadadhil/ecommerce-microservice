@@ -12,8 +12,8 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-
-app.use("/product", productRouter);
+    
+app.use("/", productRouter);
 
 const startServer = async () => {
     try {

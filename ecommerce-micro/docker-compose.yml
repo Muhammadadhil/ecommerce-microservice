@@ -1,0 +1,27 @@
+services:
+  apiGateway:
+    image: ecommerce-apigateway
+    ports: 
+      - "3000:3000"
+
+  user-auth:
+    image: user-auth
+    ports:
+      - "3030:3030"
+
+  product:
+    image: product-service
+    ports:
+      - "4040:4040"   
+
+  order:
+    image: order-service
+    ports:
+      - "5050:5050"
+
+  notification:
+    image: notification-service
+    ports:
+      - "6060:6060"               
+      
+             

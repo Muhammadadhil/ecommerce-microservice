@@ -81,7 +81,7 @@ const consumeNotification = async () => {
             default:
                 console.log("Unknown notification type:", type);
         }
-        channel.ack(message);
+        
     },{noAck:true});
 };
 async function startServer(){
