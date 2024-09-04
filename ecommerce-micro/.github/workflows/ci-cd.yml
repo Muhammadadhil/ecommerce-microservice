@@ -54,18 +54,18 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: muhammadadhil
         password: ${{ secrets.DOCKER_PASSWORD }}  
 
     - name: Build and push docker images
     run: |
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest ./services/user-authentication
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest ./services/product
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/order-service:latest ./services/order
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest ./services/notification
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/ecommerce-apiGateway:latest ./apiGateway
-      docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
-      docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
-      docker push ${{ secrets.DOCKER_USERNAME }}/order-service:latest
-      docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
-      docker push ${{ secrets.DOCKER_USERNAME }}/ecommerce-apiGateway:latest 
+      docker build -t muhammadadhil/user-service:latest ./services/user-authentication
+      docker build -t muhammadadhil/product-service:latest ./services/product
+      docker build -t muhammadadhil/order-service:latest ./services/order
+      docker build -t muhammadadhil/notification-service:latest ./services/notification
+      docker build -t muhammadadhil/ecommerce-apiGateway:latest ./apiGateway
+      docker push muhammadadhil/user-service:latest
+      docker push muhammadadhil/product-service:latest
+      docker push muhammadadhil/order-service:latest
+      docker push muhammadadhil/notification-service:latest
+      docker push muhammadadhil/ecommerce-apiGateway:latest 
